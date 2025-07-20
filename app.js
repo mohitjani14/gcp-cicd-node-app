@@ -1,8 +1,8 @@
 const express = require('express');
-const app = express();
 const morgan = require('morgan');
 const chalk = require('chalk');
 
+const app = express();
 const PORT = process.env.PORT || 8080;
 const VERSION = 'v1';
 
@@ -10,60 +10,60 @@ const VERSION = 'v1';
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Sample data
+// In-memory users
 let users = [
   { id: 1, name: 'Alice DevOps', role: 'Engineer' },
   { id: 2, name: 'Bob Cloud', role: 'Admin' }
 ];
 
-// Root Route
+// Root route
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: chalk.green('🚀 Welcome to GCP CI/CD Demo API!'),
+    message: '🚀 Welcome to GCP CI/CD Demo API!',
     version: VERSION,
     time: new Date().toISOString()
   });
 });
 
-// Health Check
+// Health route
 app.get('/health', (req, res) => {
-  res.status(200).send(chalk.blue('OK'));
+  res.status(200).send('OK');
 });
 
-// Get Users
+// Get all users
 app.get(`/api/${VERSION}/users`, (req, res) => {
   res.status(200).json(users);
 });
 
-// Get Single User
+// Get user by ID
 app.get(`/api/${VERSION}/users/:id`, (req, res) => {
   const user = users.find(u => u.id === parseInt(req.params.id));
-  if (!user) return res.status(404).json({ error: chalk.red('User not found') });
+  if (!user) return res.status(404).json({ error: 'User not found' });
   res.status(200).json(user);
 });
 
-// Add User
+// Create user
 app.post(`/api/${VERSION}/users`, (req, res) => {
   const { name, role } = req.body;
-  if (!name || !role) return res.status(400).json({ error: chalk.yellow('Name and role are required') });
+  if (!name || !role) return res.status(400).json({ error: 'Name and role are required' });
 
   const newUser = { id: users.length + 1, name, role };
   users.push(newUser);
   res.status(201).json(newUser);
 });
 
-// Fallback
+// Fallback route
 app.use((req, res) => {
-  res.status(404).json({ error: chalk.gray('Route not found') });
+  res.status(404).json({ error: 'Route not found' });
 });
 
-// Error Handler
+// Error handler
 app.use((err, req, res, next) => {
-  console.error(chalk.red('Unhandled Error:'), err.stack);
+  console.error(chalk.red('❌ Unhandled Error:'), err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Start Server
+// Start server
 app.listen(PORT, () => {
-  console.log(chalk.cyanBright(`🚀 Server running on http://localhost:${PORT}`));
+  console.log(chalk.greenBright(`🚀 Server running at http://localhost:${PORT}`));
 });
